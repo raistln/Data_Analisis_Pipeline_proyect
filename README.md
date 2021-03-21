@@ -1,4 +1,4 @@
-# Data_Analisis_PIpeline_proyect
+# Data_Analisis_PIpeline_proyect_Kaggle
 
 The proyect is totally done by myself, I know it´s can be better. But time to the time. I will continue with it when i can.
 
@@ -6,7 +6,7 @@ The intention of this proyect is to obtain a more or less cleaned pandas datafra
 
 That is a very simple data analisis pipeline[data_analisis_pipeline()]. Made only with more or less simple python code. It has 3 parts:
 
-First [download_import_kaggle()] It takes a csv file from [Kaggle]("https://www.kaggle.com/") and import it to a new folder called [datasets]. 
+First [download_import_kaggle()] It takes a csv file from [Kaggle]("https://www.kaggle.com/") using the [Kaggle Api] and import it to a new folder called [datasets]. You can use it were there are only csv files datasets in [Kaggle], because for datasets with pics it takes to long when it download all the set, and unzip it (surely I can make a while loop to know when the unzip has finalized or put it to sleep some seconds to have time to download and unzip it.
 
 Second [first_view(df)] it gives a first view of the dataset and ask the user if she/he wants to clean duplicates/empty rows and columns, standarize columns and rows (putting all to lower and strip trailing whitespaces). It also ask the user if he/she want to use all de dataframe or just some columns.
 
