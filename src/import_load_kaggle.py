@@ -1,8 +1,7 @@
 import kaggle
-import os
 import pandas as pd
 
-ROOT = os.getcwd()
+
 
 
 def fetch_data(download_url, download_path):
@@ -15,7 +14,7 @@ def fetch_data(download_url, download_path):
 def import_load_data(csv_path, encoding="ISO-8859-1"):
     
     encoding = input("Default enconding is ISO-8859-1, do you prefer another one? Please type it.\n")
-    
+
     try:
         df = pd.read_csv(csv_path, encoding=encoding)
     except:
@@ -31,10 +30,11 @@ def download_import_kaggle():
     
     download_url = download_root.split("/", 3)[3]
     csv_files = fetch_data(download_url, download_path)
-
+        
     if len(csv_files) == 1:
-        csv_path = ROOT + "../INPUT/" + str(csv_files[0])
+        csv_path = "../INPUT/" + str(csv_files[0])
+
     else:
         csv_file = input(f"Please what file did you need to import from this list {csv_files}?: \n")
-        csv_path = ROOT + "../INPUT/" + csv_file
+        csv_path = "../INPUT/" + csv_file
     return import_load_data(csv_path, encoding="ISO-8859-1")

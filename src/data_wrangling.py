@@ -76,7 +76,7 @@ def transform_cat(df, col):
     print("------------------------------------------")
     
     print(f"For the column {col}.")
-    print(f"If the column isn´t categorical left blank the next cuestion.)
+    print(f"If the column isn´t categorical left blank the next cuestion.")
     trans_cat = input("Do you want to make a pattern? y/n: ")
     
     if trans_cat == "y":
@@ -84,8 +84,6 @@ def transform_cat(df, col):
         df = stand_categorical(col, pattern)
     elif trans_cat == "n":
         df = stand_categorical(col, pattern)
-    else:
-        continue
         
     return df
 
@@ -215,7 +213,7 @@ def data_wrangling(df):
     if numeric == "y":
         auto = input("Do you want it to make it automatic(y) or by yourself(n)? y/n: \n")
         if auto == "y":
-            df = numeric_search(df=df)
+            df = numeric_search(df)
         else:
             while True:
                 col = input("Which column do you want to change to numerical type? Write finish if you want to continue to another task.\n")
@@ -223,28 +221,28 @@ def data_wrangling(df):
                 if col == "end" or col == "":
                     break
                 fill = input("Do you want to fill the nan with median, mean or nan? Write one of them.\n")
-                df = col_to_num(df=df, col=col, type="float64", fill=fill)
+                df = col_to_num(df, col, type="float64", fill=fill)
     
     categorical = input("Do you want to change a column to a categorical type? y/n: \n")
     if categorical == "y":
-        prob_cat = categorical_search(df=df)
+        prob_cat = categorical_search(df)
         cate = input(f"The columns that could be categorical are {prob_cat}, do you want to change all(y) or do it manually(n)? y/n:\n")
         if cate == "y":
             for col in prob_cat:
-                df = transform_cat(df=df, col=col)
+                df = transform_cat(df, col)
         if cate == "n":
             probs = input("Insert the columns you want to change to categorical:\n")
             prob_cat = probs.replace("\'", "").split(",")
             prob_cat = [i.strip() for i in prob_cat]
             for col in prob_cat:
-                df = transform_cat(df=df, col=col)
+                df = transform_cat(df, col)
     
     dates = input("Do you want to change a column to a datetime type? y/n:\n")
     if dates == "y":
-        df = stand_datetime(df=df)
+        df = stand_datetime(df)
         
     finish = input("To finish, do you want to fill the rest of the DataFrame nans? y/n:\n")
     if finish == "y":
-        df = finish_fill(df=df)
-
+        df = finish_fill(df)
+    df.to_csv("../OUTPUT/clean_csv.csv")
     return df

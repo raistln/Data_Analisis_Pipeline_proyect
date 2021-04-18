@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from IPython.display import display
-
+import numpy as np
 
 
 def first_transformation(df):
@@ -90,7 +90,7 @@ def first_view(df):
     duplicates = input("Do you want to remove duplicates,empty rows/columns, and irrelevant stadistical columns? y/n:\n")
     if duplicates == "y":
         max_nan = int(input(f"How many non-nan requires in a row? Please insert a value between 0-{len(df.columns)}:\n"))
-        toppct = 0.01 * float(input("What is the maximum % of nan in a column to be stadistical relevant? Insert a value between 0-100, (default is 95%):\n"))
+        toppct = 0.01 * float(input("What is the maximum % of nan in a column to be stadistical relevant? Insert a value between 0-100, (recommended is 95%):\n"))
         df = drop_columns_nans(df, max_nan=0, keep="first", toppct = 0.95)
                    
     part = input("Do you want to use all the df(yes) or just a part(n)? y/n:\n")
