@@ -5,3 +5,4 @@ venv
 .json
 .pdf
 .png
+__pycache__
