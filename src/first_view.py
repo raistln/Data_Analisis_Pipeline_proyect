@@ -37,7 +37,7 @@ def first_transformation(df):
 
 
 
-def drop_columns_nans(df, max_nan=0, subset=None, keep="first", toppct = 0.95):
+def drop_columns_nans(df, toppct, max_nan, subset=None, keep="first"):
     a = df.shape
 
     df.dropna(axis=1, how="all", inplace=True)
@@ -89,9 +89,15 @@ def first_view(df):
         
     duplicates = input("Do you want to remove duplicates,empty rows/columns, and irrelevant stadistical columns? y/n:\n")
     if duplicates == "y":
-        max_nan = int(input(f"How many non-nan requires in a row? Please insert a value between 0-{len(df.columns)}:\n"))
-        toppct = 0.01 * float(input("What is the maximum % of nan in a column to be stadistical relevant? Insert a value between 0-100, (recommended is 95%):\n"))
-        df = drop_columns_nans(df, max_nan=0, keep="first", toppct = 0.95)
+        try:
+            max_nan = int(input(f"How many non-nan requires in a row? Please insert a value between 0-{len(df.columns)}:\n"))
+        except:
+            max_nan = 0
+        try:
+            toppct = 0.01 * float(input("What is the maximum % of nan in a column to be stadistical relevant? Insert a value between 0-100, (recommended is 95%):\n"))
+        except:
+            toppct = 0.95
+        df = drop_columns_nans(max_nan=max_nan, keep="first", toppct = toppct, df=df)
                    
     part = input("Do you want to use all the df(yes) or just a part(n)? y/n:\n")
     if part == "n":

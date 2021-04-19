@@ -43,14 +43,13 @@ def col_to_num(df, col, type="float64", fill="nan"):
     if fill == "median":
         median = df[col].median()
         df[col].fillna(median, inplace=True)
-        return df
+
     elif fill == "mean":
         mean = df[col].mean()
         df[col].fillna(mean, inplace=True)
-        return df
     else:
         df[col].fillna(fill, inplace=True)
-        return df
+    return df
     
     
 def categorical_search(df):
@@ -81,10 +80,9 @@ def transform_cat(df, col):
     
     if trans_cat == "y":
         pattern = make_pattern(col)
-        df = stand_categorical(col, pattern)
+        df = stand_categorical(df, col, pattern)
     elif trans_cat == "n":
-        df = stand_categorical(col, pattern)
-        
+        df = stand_categorical(df, col, pattern)
     return df
 
 
@@ -121,14 +119,14 @@ def make_pattern(col):
 
 
 
-def stand_categorical(col, pattern, other= None):
+def stand_categorical(df, col, pattern, other= None):
     df[col] = df[col].astype("category")
     
     try:
         store_criteria, store_values = zip(*pattern)
         df[f"{col}_new"] = np.select(store_criteria, store_values, other)
         df[col] = df[f"{col}_new"].combine_first(df[col])
-        df.drop([f"{col}_new"],axis=1, inplace=True)
+        df = df.drop([f"{col}_new"],axis=1)
         return df
     
     except:
@@ -200,7 +198,7 @@ def finish_fill(df):
     
     fill = input("With what do you want to fill, choose one of these: median, mean: ")
     cat = input("Do you want to fill with mode the categorical type columns? y/n: ")
-    df = fill_all(df, fill= fill, cat=cat)
+    df = fill_all(df, fill, cat)
     return df
 
 
@@ -216,12 +214,12 @@ def data_wrangling(df):
             df = numeric_search(df)
         else:
             while True:
-                col = input("Which column do you want to change to numerical type? Write finish if you want to continue to another task.\n")
+                col = input("Which column do you want to change to numerical type? Write end if you want to continue to another task.\n")
                 print("Write end or left blank to finish")
                 if col == "end" or col == "":
                     break
                 fill = input("Do you want to fill the nan with median, mean or nan? Write one of them.\n")
-                df = col_to_num(df, col, type="float64", fill=fill)
+                df = col_to_num(df, col, fill=fill, type="float64")
     
     categorical = input("Do you want to change a column to a categorical type? y/n: \n")
     if categorical == "y":

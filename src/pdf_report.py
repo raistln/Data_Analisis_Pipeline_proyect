@@ -69,7 +69,7 @@ class PDF(FPDF):
                 self.set_font('Times', '', 12)
                 self.ln()
                 self.print_columns(num, col)
-                stats, table = column_analisis(col)
+                stats, table = column_analisis(self.df, col)
                 top = self.y -10 
                 offset = self.x + 50
                 self.cell(40, 10,  f"mean   = {round(stats[1],2)}",0,1,"L",1)
@@ -89,7 +89,7 @@ class PDF(FPDF):
                 self.set_font('Times', '', 12)
                 self.ln()
                 self.print_columns(num, col)
-                stats, table = column_analisis(col)
+                stats, table = column_analisis(df, col)
                 dfi.export(table,"table.png")
                 self.image(f"table.png")
                 self.image(f"{col}.png")
@@ -153,7 +153,7 @@ def first_transformation_report(df):
     plt.savefig("nulls.png")
 
     
-def plot_num(col):
+def plot_num(df, col):
     Q1 = df[col].describe()[4]
     Q3 = df[col].describe()[6]
     figure , axes = plt.subplots(nrows=1, ncols=2)
@@ -161,7 +161,7 @@ def plot_num(col):
     axes[1].hist(df[col][(df[col]>Q1) & (df[col]<Q3)], bins=100)
     plt.savefig(f"{col}.png")
     
-def plot_cat(col):
+def plot_cat(df, col):
     dic = dict(df[col].value_counts())
     bars = plt.barh(list(dic.keys()), dic.values(), color = "tab:green")
     bars[0].set_color("r")
@@ -169,13 +169,13 @@ def plot_cat(col):
     plt.savefig(f"{col}.png")
 
     
-def column_analisis(col):
+def column_analisis(df, col):
     a = df[col].describe()
     b = df.stb.freq([col])
     if df[col].dtype == "float64":
-        plot_num(col)
+        plot_num(df, col)
     elif df[col].dtype.name == "category":
-        plot_cat(col)
+        plot_cat(df, col)
     return a, b
 
 def pdf_report(df):   
