@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from random import choices
+import sidetable
 import re
 from IPython.display import display
 
@@ -8,6 +9,7 @@ from IPython.display import display
 
 
 def numeric_search(df, tries = 5):
+	"""This function should search in the columns where are not numerical, like object or string and transform it to a numeric type column."""
     to_num = []
     
     for col in df.columns.tolist():
@@ -22,7 +24,7 @@ def numeric_search(df, tries = 5):
             try:
                 five_true = list(map(float, five))
                 to_num.append(col)
-            except ValueError:
+            except ValueError or TypeError:
                 continue
     for col in to_num:     
         fill = input(f"For the column \"{col}\", do you want to fill the nan with median, mean or nan? Write one of them.\n")
@@ -33,13 +35,15 @@ def numeric_search(df, tries = 5):
 
 
 def col_to_num(df, col, type="float64", fill="nan"):
+	"""This function clean with regex a numeric column and take out al the special simbols, and then it changes it to a numeric type column. The nan values of the column will be filled with median or mean if it is necesary."""
     
     try:
         df[col] = df[col].str.replace(r"^[[+-]?[0-9]*\.?[0-9]+] | [^\w\s*] | [a-zA-Z]|½|\?|<|>|\"|-|\(|\)|\.|\'| |&", "", regex = True)
     except AttributeError:
         pass
+    print(col)    
     df[col] = pd.to_numeric(df[col], errors = "coerce")
-
+    
     if fill == "median":
         median = df[col].median()
         df[col].fillna(median, inplace=True)
@@ -49,11 +53,14 @@ def col_to_num(df, col, type="float64", fill="nan"):
         df[col].fillna(mean, inplace=True)
     else:
         df[col].fillna(fill, inplace=True)
+        
+    df[col] = pd.to_numeric(df[col], errors = "coerce")
+    
     return df
     
     
 def categorical_search(df):
-    
+	"""This function search in the diferent columns of the DataFrame if they are categorical with a criteria that there must be at least 5% of unique values of the length of the DataFrame. It returns a list with the most probable categorical columns."""
     insta_df = pd.DataFrame()
     df_non_numeric = df.select_dtypes(exclude = [np.number])
     non_numeric_cols = df_non_numeric.columns.values.tolist()
@@ -70,6 +77,7 @@ def categorical_search(df):
 
 
 def transform_cat(df, col):
+	"""This function transforms the type of the columns of the DataFrame to a categorical one. The function first ask the user if the column is a categorical column or not, if it is, the function shows a list with the unique values and ask the user if they want to make a patter to change inconsistent data in the column, if not it only change the type of the column."""
     pattern = []
     print(df[col].value_counts())
     print("------------------------------------------")
@@ -87,6 +95,7 @@ def transform_cat(df, col):
 
 
 def make_pattern(col):
+	"""This function make a list of patterns with a tuple of words that are going to replace each other. """
     pattern = []
     m_pat = input("Its a binary column? y/n\n")
     if m_pat == "y":
@@ -120,6 +129,7 @@ def make_pattern(col):
 
 
 def stand_categorical(df, col, pattern, other= None):
+	"""This function change the type of the column to categorical and replace words with a given pattern"""
     df[col] = df[col].astype("category")
     
     try:
@@ -135,6 +145,7 @@ def stand_categorical(df, col, pattern, other= None):
     
     
 def clean_datetime(df, col, new_columns):
+	"""This function cleans with regex the values of a given column that should be a datetime column, after that it change the type to datetime. The function gives the posibility to make 3 new columns with year, month, day separated."""
     df[col] = df[col].str.replace(r"^[[+-]?[0-9]*\.?[0-9]+]|[^\w\s*] | ½|\?|<|>|\"|-|\(|\)|\.|\'| |&]|reported", "", regex = True)
     df[col]  = pd.to_datetime(df[col], errors= "coerce")
     df[col] = df[col].astype("datetime64[D]", errors="ignore")
@@ -149,6 +160,7 @@ def clean_datetime(df, col, new_columns):
 
 
 def stand_datetime(df):
+	"""This function is responsible to ask the user different cuestions about the transformation of the datetime column, it ask the user wich column should change to datetime type and then if the user want 3 new columns with year, month and day separately."""
     while True:
         col = input("Wich column do you want to change. Please enter the name of the column:\n")                
         if col in df.columns.tolist():
@@ -170,6 +182,7 @@ def stand_datetime(df):
     
     
 def fill_all(df, fill, cat = "n"):
+	"""This function will fill numeric columns with mean or median and categorical columns with mode if the user want it."""
     
     df_numeric = df.select_dtypes(include = [np.number])
     df_numeric_columns = df_numeric.columns.tolist()
@@ -195,6 +208,7 @@ def fill_all(df, fill, cat = "n"):
 
 
 def finish_fill(df):
+	"""This function ask the cuestion if you want to fill the numeric column with mean or median and if you want to fill categorical columns with mode."""
     
     fill = input("With what do you want to fill, choose one of these: median, mean: ")
     cat = input("Do you want to fill with mode the categorical type columns? y/n: ")
@@ -205,6 +219,7 @@ def finish_fill(df):
 
 
 def data_wrangling(df):
+	"""This funtion summarizes all the procces of wrangling the data. First it will search for numeric columns and transform it, then with categorical columns, then with datetime columns and at least it will fill de nan values of the DataFrame with a choosen value."""
     print(df.info())
     
     numeric = input("Do you want to change a column to a numerical type? y/n:\n")

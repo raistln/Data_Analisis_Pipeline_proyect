@@ -4,14 +4,29 @@ import matplotlib.pyplot as plt
 from IPython.display import display
 import numpy as np
 
-
+def basic_view(df):
+    """This function should show a first and basic view of the DataFrame. We will see the head, tail and the info of the DataFrame"""
+    print("\n")
+    print("Head-DataFrame")
+    display(df.head())
+    print("\n")
+    print("Tail-DataFrame")
+    display(df.tail())
+    print("\n")
+    print("Info-DataFrame")
+    print("\n")
+    display(df.info())
+    
+    
 def first_transformation(df):
-    df = df.applymap(lambda s:s.lower() if type(s) == str else s)
+    """This function is responsible for the standarization of the string, putting their to lowercase. It will also show a little DataFrame with the total % of nan for every column. To see it more easily it will show a heatmap or barplot, depending of the number of columns to show."""
+    df = df.applymap(lambda s:s.lower() if isinstance(s,str) else s)
     df.columns = df.columns.str.lower()
     df.columns = df.columns.str.strip()
     instant_df = pd.DataFrame()
     inf_df = pd.DataFrame(index=range(1))
     cols = df.columns
+    
     for col in cols:
         pct_missing = np.mean(df[col].isnull())
         inf_df[col] = f"{round(pct_missing*100)}%"
@@ -22,7 +37,8 @@ def first_transformation(df):
             instant_df[f"{col}_is_missing"] = missing
         else:
             instant_df[f"{col}_is_missing"] = 0
-    display(inf_df.T)
+            
+    display(inf_df)
     is_missing_cols = [col for col in instant_df.columns if "is_missing" in col]
     instant_df["num_missing"] = instant_df[is_missing_cols].sum(axis = 1)
     if len(cols) < 30:
@@ -35,28 +51,28 @@ def first_transformation(df):
     return df
 
 
-
-
 def drop_columns_nans(df, toppct, max_nan, subset=None, keep="first"):
+    """First the function will drop the columns that are non statistical significative using the parameter toppct(where we input the top % of nan in a colum). This function will also drop the duplicates in columns and rows. At the end it will show a little report with the cuantity of columns and rows dropped."""
+    
     a = df.shape
-
-    df.dropna(axis=1, how="all", inplace=True)
-    df = df.T.drop_duplicates().T
-
-    df = df.dropna(axis=0, thresh=max_nan)
-    df.drop_duplicates(subset, keep, inplace=True)
 
     num_rows = len(df.index)
     low_information_cols = []
     for col in df.columns:
-        cnts = df[col].value_counts(dropna=False)
-        top_pct = (cnts/num_rows).iloc[0]
+        cnts = np.sum(df[col].isnull())
+        top_pct = (cnts/num_rows)
         if top_pct > toppct:
             low_information_cols.append(col)
     df.drop(low_information_cols, axis=1, inplace=True)
     b = df.shape
     columns_dropped = a[1] - b[1]
     rows_dropped = a[0] - b[0]
+    
+    df.dropna(axis=1, how="all", inplace=True)
+    df = df.T.drop_duplicates().T
+
+    df = df.dropna(axis=0, thresh=max_nan)
+    df.drop_duplicates(subset, keep, inplace=True)
     
     print(f"{columns_dropped} columns dropped")
     print(f"{rows_dropped} rows dropped")
@@ -68,6 +84,7 @@ def drop_columns_nans(df, toppct, max_nan, subset=None, keep="first"):
 
 
 def all_or_part_df(df):
+    """This function will slice the DataFrame if the user want, giving him the choice to take all the DataFrame or just a part."""
     print(df.columns.tolist())
     while True:
         columns = input("Write only the columns you want to work with. Without and separated by ,\n")
@@ -84,7 +101,8 @@ def all_or_part_df(df):
             
 
 def first_view(df):
-    
+    """This function launch first the basic_view() function, where the user have a little idea about her/his DataFrame, after that it launches the first_transformation() function, and after that it ask the user if it want to remove duplicates and irrelevant statistical columns, if yes it ask some questions to the user and lauch the drop_columns_nans(). At least it launches de all or part_df if the user only want some columns of the DataFrame"""
+    basic_view(df)
     df = first_transformation(df)
         
     duplicates = input("Do you want to remove duplicates,empty rows/columns, and irrelevant stadistical columns? y/n:\n")

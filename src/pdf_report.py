@@ -115,6 +115,7 @@ class PDF(FPDF):
 
 
 def info_df(df): 
+	"""This function generates a little DataFrame with info of the DataFrame that we worked before."""
     name = {"Name":[]}
     non_null = {"Non_null":[]}
     dtypes = {"Dtype":[]}
@@ -132,6 +133,7 @@ def info_df(df):
     return info_df
 
 def first_transformation_report(df):
+	"""This function show a heatmap or barplot where we can see the missing values after the transformation."""
     instant_df = pd.DataFrame()
     cols = df.columns
     for col in cols:
@@ -154,6 +156,7 @@ def first_transformation_report(df):
 
     
 def plot_num(df, col):
+	"""This function shows information about numeric columns."""
     Q1 = df[col].describe()[4]
     Q3 = df[col].describe()[6]
     figure , axes = plt.subplots(nrows=1, ncols=2)
@@ -162,6 +165,7 @@ def plot_num(df, col):
     plt.savefig(f"{col}.png")
     
 def plot_cat(df, col):
+	"""This function shows information about categorical columns."""
     dic = dict(df[col].value_counts())
     bars = plt.barh(list(dic.keys()), dic.values(), color = "tab:green")
     bars[0].set_color("r")
@@ -170,6 +174,7 @@ def plot_cat(df, col):
 
     
 def column_analisis(df, col):
+	"""This function select the columns and launches different function depending of the type of the column."""
     a = df[col].describe()
     b = df.stb.freq([col])
     if df[col].dtype == "float64":
@@ -179,6 +184,7 @@ def column_analisis(df, col):
     return a, b
 
 def pdf_report(df):   
+	"""This function generates a pdf report with interesting information about the DataFrame after done all the transformation."""
     pdf = PDF()
     pdf.set_title(title = 'Data Analisis Pipeline Report')
     pdf.set_author('Samuel Martín')
